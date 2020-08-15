@@ -7,9 +7,10 @@ import (
 	"dashboard/postgresql"
 	"dashboard/util/password"
 	"encoding/json"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	"net/http"
 )
 
 func Login(c *gin.Context) {
@@ -39,14 +40,13 @@ func Login(c *gin.Context) {
 		if encryptPassword == userModel.Password {
 			serializer := userModel.UserSerializer()
 			var response = Response{
-				Token:     jwt.GenerateToken(c, serializer.Id),
-				Id:        serializer.Id,
-				Username:  serializer.Username,
-				Password:  serializer.Password,
-				FirstName: serializer.FirstName,
-				LastName:  serializer.LastName,
-				Mobile:    serializer.Mobile,
-				Email:     serializer.Email,
+				Token:      jwt.GenerateToken(c, serializer.Id),
+				Id:         serializer.Id,
+				Username:   serializer.Username,
+				Password:   serializer.Password,
+				ActualName: serializer.ActualName,
+				Mobile:     serializer.Mobile,
+				Email:      serializer.Email,
 			}
 			c.JSON(http.StatusOK, &response)
 		} else {

@@ -1,9 +1,7 @@
-package login
+package user
 
-type Response struct {
-	Token      string `json:"token"`
-	Id         uint   `json:"id"`
-	Username   string `json:"username"`
+type Request struct {
+	Username   string `json:"username,required"`
 	Password   string `json:"password"`
 	ActualName string `json:"actual_name"`
 	Mobile     string `json:"mobile"`
