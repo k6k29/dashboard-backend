@@ -2,6 +2,7 @@ package router
 
 import (
 	"dashboard/api/login"
+	"dashboard/api/user"
 	"dashboard/middleware/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -13,5 +14,6 @@ func SetupRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 	api := r.Group("/api")
 	login.LoadLoginRouter(api)
+	user.LoadUserRouter(api)
 	return r
 }
