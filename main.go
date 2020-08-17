@@ -1,8 +1,6 @@
 package main
 
-import (
-	"dashboard/router"
-)
+import "dashboard/router"
 
 func main() {
 	Migrate()

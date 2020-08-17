@@ -1,4 +1,4 @@
-package user
+package response
 
 type PageResponse struct {
 	Count   int         `json:"count"`

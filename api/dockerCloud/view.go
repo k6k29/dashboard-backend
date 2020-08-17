@@ -1,59 +1,56 @@
-package user
+package dockerCloud
 
 import (
 	"dashboard/error/errorResponse"
-	"dashboard/model/user"
+	"dashboard/model/dockerCloud"
 	"dashboard/postgresql"
 	"dashboard/response"
 	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"net/http"
 	"strconv"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
-func GetUserList(c *gin.Context) {
+func GetDockerCloudList(c *gin.Context) {
 	db := postgresql.GetInstance()
-	userDb := db.Table("users").Where("deleted_at is null")
-	if username := c.DefaultQuery("username", ""); username != "" {
-		userDb = userDb.Where("username like ?", "%"+username+"%")
+	dockerCloudDb := db.Table("docker_clouds").Where("deleted_at is null")
+	if name := c.DefaultQuery("name", ""); name != "" {
+		dockerCloudDb = dockerCloudDb.Where("name like ?", "%"+name+"%")
 	}
-	if actualName := c.DefaultQuery("actual_name", ""); actualName != "" {
-		var userIdArray []uint
-		db.Table("profiles").Where("actual_name like ?", "%"+actualName+"%").Pluck("id", &userIdArray)
-		userDb = userDb.Where("id in (?)", userIdArray)
+	if host := c.DefaultQuery("host", ""); host != "" {
+		dockerCloudDb = dockerCloudDb.Where("host like ?", "%"+host+"%")
 	}
-	var userModelArray []user.User
+	var dockerCloudModelArray []dockerCloud.DockerCloud
 	if page := c.DefaultQuery("page", ""); page != "" {
 		pageInt, _ := strconv.Atoi(page)
-		if querySet := userDb.Limit(20).Offset((pageInt - 1) * 20).Order("id desc").Find(&userModelArray); querySet.Error != nil {
+		if querySet := dockerCloudDb.Limit(20).Offset((pageInt - 1) * 20).Order("id desc").Find(&dockerCloudModelArray); querySet.Error != nil {
 			e := errorResponse.Response{ErrorCode: querySet.Error.Error()}
 			c.JSON(http.StatusBadRequest, &e)
 			panic(querySet.Error)
 		}
 		var pageResponse response.PageResponse
-		pageResponse.Results = user.UserArraySerializers(userModelArray)
-		userDb.Count(&pageResponse.Count)
+		pageResponse.Results = dockerCloud.DockerCloudArraySerializers(dockerCloudModelArray)
+		dockerCloudDb.Count(&pageResponse.Count)
 		c.JSON(http.StatusOK, &pageResponse)
 	} else {
-		if querySet := userDb.Order("id desc").Find(&userModelArray); querySet.Error != nil {
+		if querySet := dockerCloudDb.Order("id desc").Find(&dockerCloudModelArray); querySet.Error != nil {
 			e := errorResponse.Response{ErrorCode: querySet.Error.Error()}
 			c.JSON(http.StatusBadRequest, &e)
 			panic(querySet.Error)
 		}
-		userSerializer := user.UserArraySerializers(userModelArray)
-		c.JSON(http.StatusOK, &userSerializer)
+		dockerCloudSerializer := dockerCloud.DockerCloudArraySerializers(dockerCloudModelArray)
+		c.JSON(http.StatusOK, &dockerCloudSerializer)
 	}
 }
 
-func GetUser(c *gin.Context) {
+func GetDockerCloud(c *gin.Context) {
 	db := postgresql.GetInstance()
-	userID := c.Param("id")
-	var userModel user.User
-	if querySet := db.Where("deleted_at is null").Find(&userModel, userID); querySet.Error != gorm.ErrRecordNotFound {
-		e := errorResponse.Response{ErrorCode: "用户不存在"}
+	dockerCloudID := c.Param("id")
+	var dockerCloudModel dockerCloud.DockerCloud
+	if querySet := db.Where("deleted_at is null").Find(&dockerCloudModel, dockerCloudID); querySet.Error != gorm.ErrRecordNotFound {
+		e := errorResponse.Response{ErrorCode: "DockerCloud不存在"}
 		c.JSON(http.StatusBadRequest, &e)
 		return
 	} else if querySet.Error != nil {
@@ -61,13 +58,13 @@ func GetUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, &e)
 		panic(querySet.Error)
 	} else {
-		serializer := userModel.UserSerializer()
+		serializer := dockerCloudModel.DockerCloudSerializer()
 		c.JSON(http.StatusOK, &serializer)
 	}
 }
 
-func CreateUser(c *gin.Context) {
-	var serializer user.Serializer
+func CreateDockerCloud(c *gin.Context) {
+	var serializer dockerCloud.Serializer
 	if err := json.NewDecoder(c.Request.Body).Decode(&serializer); err != nil {
 		e := errorResponse.Response{ErrorCode: "参数错误"}
 		c.JSON(http.StatusBadRequest, &e)
@@ -81,8 +78,8 @@ func CreateUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, "")
 }
 
-func UpdateUser(c *gin.Context) {
-	var serializer user.Serializer
+func UpdateDockerCloud(c *gin.Context) {
+	var serializer dockerCloud.Serializer
 	if err := json.NewDecoder(c.Request.Body).Decode(&serializer); err != nil {
 		e := errorResponse.Response{ErrorCode: "参数错误"}
 		c.JSON(http.StatusBadRequest, &e)
@@ -96,12 +93,12 @@ func UpdateUser(c *gin.Context) {
 	c.JSON(http.StatusAccepted, "")
 }
 
-func DeleteUser(c *gin.Context) {
+func DeleteDockerCloud(c *gin.Context) {
 	db := postgresql.GetInstance()
-	userID := c.Param("id")
-	var userModel user.User
-	if querySet := db.Where("deleted_at is null").Find(&userModel, userID); querySet.Error != gorm.ErrRecordNotFound {
-		e := errorResponse.Response{ErrorCode: "用户不存在"}
+	dockerCloudId := c.Param("id")
+	var dockerCloudModel dockerCloud.DockerCloud
+	if querySet := db.Where("deleted_at is null").Find(&dockerCloudModel, dockerCloudId); querySet.Error != gorm.ErrRecordNotFound {
+		e := errorResponse.Response{ErrorCode: "DockerCloud不存在"}
 		c.JSON(http.StatusBadRequest, &e)
 		return
 	} else if querySet.Error != nil {
@@ -110,8 +107,8 @@ func DeleteUser(c *gin.Context) {
 		panic(querySet.Error)
 	} else {
 		now := time.Now()
-		userModel.BaseModel.DeletedAt = now
-		if querySet := db.Save(&userModel); querySet.Error != nil {
+		dockerCloudModel.BaseModel.DeletedAt = now
+		if querySet := db.Save(&dockerCloudModel); querySet.Error != nil {
 			e := errorResponse.Response{ErrorCode: querySet.Error.Error()}
 			c.JSON(http.StatusBadRequest, &e)
 			panic(querySet.Error)
