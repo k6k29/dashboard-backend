@@ -1,6 +1,7 @@
 package router
 
 import (
+	"dashboard/api/dockerCloud"
 	"dashboard/api/login"
 	"dashboard/api/user"
 	"dashboard/middleware/cors"
@@ -15,5 +16,6 @@ func SetupRouter() *gin.Engine {
 	api := r.Group("/api")
 	login.LoadLoginRouter(api)
 	user.LoadUserRouter(api)
+	dockerCloud.LoadDockerCloudRouter(api)
 	return r
 }
