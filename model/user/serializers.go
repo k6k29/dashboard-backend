@@ -16,7 +16,7 @@ type Serializer struct {
 	Email      string `json:"email"`
 }
 
-func (u *User) UserSerializer() Serializer {
+func (u *User) Serializer() Serializer {
 	var serializer Serializer
 	serializer.Id = u.BaseModel.ID
 	serializer.Username = u.Username
@@ -32,15 +32,15 @@ func (u *User) UserSerializer() Serializer {
 	return serializer
 }
 
-func UserArraySerializers(userArray []User) []Serializer {
+func ArraySerializers(userArray []User) []Serializer {
 	var serializerArray []Serializer
 	for k, _ := range userArray {
-		serializerArray = append(serializerArray, userArray[k].UserSerializer())
+		serializerArray = append(serializerArray, userArray[k].Serializer())
 	}
 	return serializerArray
 }
 
-func (s *Serializer) SaveSerializer() error {
+func (s *Serializer) Save() error {
 	db := postgresql.GetInstance()
 	var userModel User
 	if s.Id == 0 {

@@ -15,7 +15,7 @@ type Serializer struct {
 	TLSKey    string `json:"tls_key"`
 }
 
-func (dc *DockerCloud) DockerCloudSerializer() Serializer {
+func (dc *DockerCloud) Serializer() Serializer {
 	var serializer Serializer
 	serializer.Id = dc.BaseModel.ID
 	serializer.Name = dc.Name
@@ -28,15 +28,15 @@ func (dc *DockerCloud) DockerCloudSerializer() Serializer {
 	return serializer
 }
 
-func DockerCloudArraySerializers(dockerCloudArray []DockerCloud) []Serializer {
+func ArraySerializers(dockerCloudArray []DockerCloud) []Serializer {
 	var serializerArray []Serializer
 	for k, _ := range dockerCloudArray {
-		serializerArray = append(serializerArray, dockerCloudArray[k].DockerCloudSerializer())
+		serializerArray = append(serializerArray, dockerCloudArray[k].Serializer())
 	}
 	return serializerArray
 }
 
-func (s *Serializer) SaveSerializer() error {
+func (s *Serializer) Save() error {
 	db := postgresql.GetInstance()
 	var dockerCloudModel DockerCloud
 	if s.Id != 0 {

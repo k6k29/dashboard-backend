@@ -38,7 +38,7 @@ func Login(c *gin.Context) {
 			panic(err.Error())
 		}
 		if encryptPassword == userModel.Password {
-			serializer := userModel.UserSerializer()
+			serializer := userModel.Serializer()
 			var response = Response{
 				Token:      jwt.GenerateToken(c, serializer.Id),
 				Id:         serializer.Id,

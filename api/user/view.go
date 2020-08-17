@@ -34,7 +34,7 @@ func GetUserList(c *gin.Context) {
 			panic(querySet.Error)
 		}
 		var pageResponse response.PageResponse
-		pageResponse.Results = user.UserArraySerializers(userModelArray)
+		pageResponse.Results = user.ArraySerializers(userModelArray)
 		userDb.Count(&pageResponse.Count)
 		c.JSON(http.StatusOK, &pageResponse)
 	} else {
@@ -43,7 +43,7 @@ func GetUserList(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, &e)
 			panic(querySet.Error)
 		}
-		userSerializer := user.UserArraySerializers(userModelArray)
+		userSerializer := user.ArraySerializers(userModelArray)
 		c.JSON(http.StatusOK, &userSerializer)
 	}
 }
@@ -61,7 +61,7 @@ func GetUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, &e)
 		panic(querySet.Error)
 	} else {
-		serializer := userModel.UserSerializer()
+		serializer := userModel.Serializer()
 		c.JSON(http.StatusOK, &serializer)
 	}
 }
@@ -73,7 +73,7 @@ func CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, &e)
 		return
 	}
-	if err := serializer.SaveSerializer(); err != nil {
+	if err := serializer.Save(); err != nil {
 		e := errorResponse.Response{ErrorCode: err.Error()}
 		c.JSON(http.StatusBadRequest, &e)
 		panic(err.Error())
@@ -88,7 +88,7 @@ func UpdateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, &e)
 		return
 	}
-	if err := serializer.SaveSerializer(); err != nil {
+	if err := serializer.Save(); err != nil {
 		e := errorResponse.Response{ErrorCode: err.Error()}
 		c.JSON(http.StatusBadRequest, &e)
 		panic(err.Error())
