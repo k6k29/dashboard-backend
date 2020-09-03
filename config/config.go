@@ -12,7 +12,7 @@ func getEnvOrDefault(key string, defaultValue string) string {
 	return result
 }
 
-var Key string = getEnvOrDefault("KEY", "zzzxxxcccvvv")
+var Key string = getEnvOrDefault("KEY", "zzxxccvvbbnnmmaa")
 
 var PGHost string = getEnvOrDefault("PG_HOST", "127.0.0.1")
 var PGPort string = getEnvOrDefault("PG_PORT", "5432")

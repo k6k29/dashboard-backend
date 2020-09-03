@@ -43,7 +43,6 @@ func Login(c *gin.Context) {
 				Token:      jwt.GenerateToken(c, serializer.Id),
 				Id:         serializer.Id,
 				Username:   serializer.Username,
-				Password:   serializer.Password,
 				ActualName: serializer.ActualName,
 				Mobile:     serializer.Mobile,
 				Email:      serializer.Email,
