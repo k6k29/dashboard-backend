@@ -48,7 +48,7 @@ func (s *Serializer) Save() error {
 			return querySet.Error
 		}
 	}
-	var userCount int
+	var userCount int64
 	db.Table("users").Where("username = ? AND id != ?", s.Username, userModel.BaseModel.ID).Count(&userCount)
 	if userCount > 0 {
 		return errors.New("用户名已存在")

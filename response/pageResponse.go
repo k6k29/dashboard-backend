@@ -1,6 +1,6 @@
 package response
 
 type PageResponse struct {
-	Count   int         `json:"count"`
+	Count   int64         `json:"count"`
 	Results interface{} `json:"results"`
 }

@@ -1,4 +1,4 @@
-FROM golang:1.14-alpine AS build-dist
+FROM golang:1.15-alpine AS build-dist
 
 ENV GOPROXY='https://goproxy.cn,direct'
 WORKDIR /go/cache
